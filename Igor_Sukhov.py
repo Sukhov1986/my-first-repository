@@ -912,6 +912,7 @@ print(f"Получение координаты {point1['x']}")
 point1["x"] = 20
 print(f"Запись значения в координату x: {point1['x']}")
 
+
 class Descriptor:
     def __set_name__(self, owner, name):
         self.__name = name
@@ -942,7 +943,6 @@ class Order:
 
 purchase1 = Order('apple', 5, 10)
 print(purchase1.summ())
-
 
 import json
 from random import choice
@@ -986,7 +986,6 @@ def write_json(person_dict):
 
 for i in range(5):
     write_json(gen_person())
-
 
 import json
 
@@ -1115,3 +1114,8 @@ Group.write_groups_json(group1)
 Group.write_groups_json(group2)
 print("*" * 100)
 print(Group.load_groups_file())
+
+import pandas as pd
+
+data = pd.read_csv('data2.csv')
+print(data)
