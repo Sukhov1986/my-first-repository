@@ -1119,3 +1119,35 @@ import pandas as pd
 
 data = pd.read_csv('data2.csv')
 print(data)
+
+import sqlite3
+
+with sqlite3.connect('mydatabase.db') as conn:
+    cursor = conn.cursor()
+    sql_lst = [
+        """CREATE TABLE IF NOT EXISTS student(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        surname TEXT,
+        name TEXT,
+        patronymic TEXT,
+        age INTEGER,
+        "group" TEXT,
+        FOREIGN KEY("group") REFERENCES groups(id));
+        """,
+        """CREATE TABLE IF NOT EXISTS groups(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        group_name TEXT
+    );""",
+        """CREATE TABLE IF NOT EXISTS association(
+        lesson_id INTEGER,
+        group_id INTEGER,
+        FOREIGN KEY(group_id) REFERENCES groups(id),
+        FOREIGN KEY(lesson_id) REFERENCES lessons(id)
+    );""",
+        """CREATE TABLE IF NOT EXISTS lessons(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        lessons_title TEXT
+    );"""
+    ]
+    for i in sql_lst:
+        cursor.execute(i)
