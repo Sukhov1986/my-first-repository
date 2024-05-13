@@ -1151,3 +1151,70 @@ with sqlite3.connect('mydatabase.db') as conn:
     ]
     for i in sql_lst:
         cursor.execute(i)
+
+
+import sqlite3
+
+with sqlite3.connect('database.db') as conn:
+    cursor = conn.cursor()
+
+    cursor.execute("""CREATE TABLE IF NOT EXISTS ToolTypes (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        type TEXT NOT NULL,
+                        description TEXT
+                    )""")
+
+    cursor.execute("""CREATE TABLE IF NOT EXISTS subcategories (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        tool_type_id INTEGER,
+                        FOREIGN KEY(tool_type_id) REFERENCES ToolTypes(id)
+                    )""")
+
+    cursor.execute("""CREATE TABLE IF NOT EXISTS Tool (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        description TEXT,
+                        price REAL,
+                        count INT,
+                        subcategory_id INTEGER,
+                        diameter INTEGER NULL,
+                        FOREIGN KEY(subcategory_id) REFERENCES subcategories(id)
+                    )""")
+
+    instrument_types = [
+        ("Точение", "Токарные работы"),
+        ("Фрезерование", "Фрезерные работы"),
+        ("Сверление", "Рассверливание отверстий")
+    ]
+    cursor.executemany("INSERT INTO ToolTypes (type, description) VALUES (?, ?)", instrument_types)
+
+    subcategories = [
+        ('Пластины', 1), ('Державки', 1), ('Оправки', 1),
+        ('Фрезы цельные', 2), ('Фрезы корпусные', 2), ('Пластины для фрез', 2),
+        ('Сверла монолитные', 3), ('Сверла корпусные', 3), ('Сверла сборные', 3), ('Пластины для корпусных сверл', 3)
+    ]
+    cursor.executemany("INSERT INTO subcategories (name, tool_type_id ) VALUES (?, ?)", subcategories)
+
+    tool_catalog = [
+        ('CNMG120412PP PV720', 'Пластина токарная негативная кермет', 758.59, 10, 1, None),
+        ('CNMA120408 CA315', 'Пластина токарная негативная твердый сплав', 847.61, 20, 1, None),
+        ('CNMG120408PQ PV7010', 'Пластина токарная негативная кермет', 654.55, 50, 1, None),
+        ('DSBNR2020K-12', 'Державка', 6234, 40, 2, None),
+        ('MWLNR2525M08', 'Державка', 4900, 3, 2, None),
+        ('A20R-STLPR11-22AE', 'Оправка расточная', 12400, 39, 3, None),
+        ('APL131-SQFN2-0120-0060-000', 'Фреза концевая твердосплавная', 4300, 12, 4, 10),
+        ('FU21-D050N22-Z04AN12', 'Корпус фрезы', 4390, 30, 5, 63),
+        ('DCK180-CAEC00-1000', 'Сверло центровочное', 5600, 30, 7, 5),
+        ('DPK191-CAEC05-0320', 'Сверло твердосплавное', 4390, 19, 7, 16),
+        ('DI01-0180D03-W25QP05', 'Корпус сверла', 24350, 10, 8, 32),
+        ('DI01-0250D05-W32QP07', 'Корпус сверла', 29950, 10, 8, 16),
+        (' S32-DRX280M-2-09', 'Корпус сверла', 26000, 10, 8, 16),
+        (' SS16-DRA140M-3', 'Корпус сверла', 10000, 7, 9, 12),
+        ('SF20-DRA170M-3', 'Корпус сверла', 13000, 12, 9, 8),
+        ('QPMG040204-SBPM-CP1130', 'Пластина для сверла ', 640, 34, 10, 32),
+        (' QPMG060204-SBPM-CP1130', 'Пластина для сверла ', 580, 4, 10, 16)
+    ]
+    cursor.executemany(
+        "INSERT INTO Tool (name, description, price, count, subcategory_id, diameter) VALUES (?, ?, ?, ?, ?, ?)",
+        tool_catalog)
