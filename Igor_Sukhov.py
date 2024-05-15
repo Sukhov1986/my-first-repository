@@ -1218,3 +1218,21 @@ with sqlite3.connect('database.db') as conn:
     cursor.executemany(
         "INSERT INTO Tool (name, description, price, count, subcategory_id, diameter) VALUES (?, ?, ?, ?, ?, ?)",
         tool_catalog)
+
+from jinja2 import Template
+
+html = """
+{% macro func(type='text', name='', placeholder='') %}
+<input type="{{ type }}" name="{{ name }}" placeholder="{{ placeholder }}">
+{% endmacro %}
+<p>{{ func(name='firstname', placeholder='Имя') }}</p>
+<p>{{ func(name='lastname', placeholder='Фамилия') }}</p>
+<p>{{ func(name='address', placeholder='Адрес') }}</p>
+<p>{{ func(type='tel', name='phone', placeholder='Телефон') }}</p>
+<p>{{ func(type='email', name='email', placeholder='Почта') }}</p>
+"""
+
+template = Template(html)
+rendered_html = template.render()
+
+print(rendered_html)
