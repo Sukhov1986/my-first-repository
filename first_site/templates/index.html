@@ -1,6 +1,22 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
 
 {% block content %}
 {{ super() }}
-Содержимое главной страницы
+<hr>
+<h2>Каталог тарифов</h2>
+<div class="grid-container">
+    {% for p in posts %}
+    <div class="card">
+        <div class="icon">
+        </div>
+        <div class="info">
+            <p class="title"><a href="/posts/{{ p.id }}">{{ p.name }}</a></p>
+            <p><strong>Цена:</strong> {{p.price}} руб.</p>
+            <p><strong>Лимит данных:</strong> {{p.data_limit}} ГБ</p>
+            <p><strong>Минуты звонков:</strong> {{p.call_minutes}} мин.</p>
+            <p><strong>Период действия:</strong> {{p.validity_period}} дней</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

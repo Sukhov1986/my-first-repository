@@ -1,0 +1,14 @@
+{% extends 'base.html'%}
+
+{% block content %}
+{{ super() }}
+<div class="container">
+        <div class="card">
+            <h1>{{ post.name }}</h1>
+            <p><strong>Цена:</strong> {{post.price}}</p>
+            <p><strong>Лимит данных:</strong> {{ post.data_limit }}</p>
+            <p><strong>Минуты звонков:</strong> {{ post.call_minutes }}</p>
+            <p><strong>Период действия:</strong> {{ post.validity_period }}</p>
+        </div>
+    </div>
+{% endblock %}

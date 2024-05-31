@@ -37,56 +37,73 @@ def get_db():
 def index():
     db = get_db()
     dbase = FDataBase(db)
-    return render_template('index.html', menu=dbase.get_menu())
-
-
-@app.route('/all_posts')
-def all_posts():
-    db = get_db()
-    dbase = FDataBase(db)
-    return render_template('all_posts.html', menu=dbase.get_menu(), title='Все статьи')
+    return render_template('index.html', menu=dbase.get_menu(),
+                           posts=dbase.get_post_annonce())
 
 
 @app.route('/about')
 def about():
     db = get_db()
     dbase = FDataBase(db)
-    return render_template('about.html', menu=dbase.get_menu(), title='О нас')
+    return render_template('about.html', menu=dbase.get_menu(),
+                           posts=dbase.get_post_annonce(), title='О нас')
 
 
-@app.route('/signup', methods=["POST", "GET"])
-def signup():
+@app.route("/posts/<int:id_post>")
+def posts(id_post):
     db = get_db()
     dbase = FDataBase(db)
-    return render_template('signup.html', menu=dbase.get_menu(), title='Регистрация')
 
+    post = dbase.get_post(id_post)
+    if not post:
+        return "Пост не найден", 404
 
-@app.route('/login', methods=["POST", "GET"])
-def login():
-    db = get_db()
-    dbase = FDataBase(db)
-    return render_template('login.html', menu=dbase.get_menu(), title='Вход')
-
-
-@app.route('/profile')
-def profile():
-    db = get_db()
-    dbase = FDataBase(db)
-    return render_template('profile.html', menu=dbase.get_menu(), title='Профиль')
+    name, price, data_limit, call_minutes, validity_period = post
+    return render_template("posts.html", title=name, menu=dbase.get_menu(),
+                           post={
+                               'name': name,
+                               'price': f"{price} руб",
+                               'data_limit': f"{data_limit} ГБ",
+                               'call_minutes': f"{call_minutes} мин.",
+                               'validity_period':  f"{validity_period} дней"
+                           })
 
 
 @app.route('/add_post', methods=["POST", "GET"])
 def add_post():
-    if request.method == "POST":
-        title = request.form['title']
-        if len(title.strip()) > 1:
-            flash('Статья успешно добавлена.', category='success')
-        else:
-            flash('Заголовок должен содержать как минимум 2 символа.', category='error')
-            return redirect(url_for('add_post'))
     db = get_db()
     dbase = FDataBase(db)
-    return render_template('add_post.html', title='Добавить статью', menu=dbase.get_menu())
+    if request.method == "POST":
+        name = request.form['name']
+        price = float(request.form['price'])
+        data_limit = int(request.form['data_limit'])
+        call_minutes = int(request.form['call_minutes'])
+        validity_period = int(request.form['validity_period'])
+
+        if len(name) < 2:
+            flash('Пожалуйста, укажите название тарифа более 1 символа.', 'error')
+            return redirect(url_for('add_post'))
+        if price < 1:
+            flash('Пожалуйста, введите корректную цену.', 'error')
+            return redirect(url_for('add_post'))
+        if data_limit < 1:
+            flash('Пожалуйста, введите корректный лимит данных.', 'error')
+            return redirect(url_for('add_post'))
+        if call_minutes < 1:
+            flash('Пожалуйста, введите корректное количество минут.', 'error')
+            return redirect(url_for('add_post'))
+        if validity_period < 1:
+            flash('Пожалуйста, введите корректный срок действия.', 'error')
+            return redirect(url_for('add_post'))
+
+        res = dbase.add_post(name, price, data_limit, call_minutes, validity_period)
+        if not res:
+            flash('Ошибка добавления данных')
+        else:
+            flash('Тариф успешно добавлен.', 'success')
+            # return redirect(url_for('index'))
+
+    return render_template('add_post.html', title='Добавить тариф', menu=dbase.get_menu())
 
 
 @app.errorhandler(404)
