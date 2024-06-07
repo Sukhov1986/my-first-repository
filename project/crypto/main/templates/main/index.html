@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+<div class="img">
+    <img src="{% static 'main/istockphoto-953499010-612x612.jpg' %}" alt="">
+    <h1>Технология блокчейн</h1>
+</div>
+<div class="block">
+    {% for m in main %}
+    <div class="element">
+        <div>
+            <img src="{{m.image.url}}" alt="">
+        </div>
+        <div class="text">
+            <h2><a href="{{ m.url }}" target="_blank">{{ m.title}}</a></h2>
+            <p>{{ m.description }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
