@@ -7,6 +7,30 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+<div class="menu">
+    <div class="wrap">
+        <div class="logo">
+            <a href="{% url 'index' %}"><img src="{% static 'main/bitcoin.png' %}" alt="Logo"></a>
+        </div>
+        <ul>
+            {% if user.is_authenticated %}
+            <li class="logo">Пользователь: {{user.username}}</li>
+            <li><a href="{% url 'profile' %}">Профиль</a></li>
+            <li>
+                <form action="{% url 'logoutuser' %}" method="post">
+                    {% csrf_token %}
+                    <button class="top">Выйти</button>
+                </form>
+
+            </li>
+            {% else %}
+            <li><a href="{% url 'register' %}">Зарегистрироваться</a></li>
+            <li><a href="{% url 'loginuser' %}">Войти</a></li>
+
+            {% endif %}
+        </ul>
+    </div>
+</div>
 <div class="content">
     <div class="wrap">
         {% block content %}
